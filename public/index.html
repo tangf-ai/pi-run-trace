@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pi 运行轨迹</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand"><span class="brand-mark">π</span><strong>运行轨迹</strong><span class="brand-sub">Pi Run Trace</span></div>
+    <span id="connection" role="status">正在连接 Pi</span>
+  </header>
+  <section class="stats-strip" aria-label="本次请求统计">
+    <div class="stats-caption"><span>本次请求</span><span id="stats-scope" class="muted">选择一次请求查看统计</span></div>
+    <dl class="metrics" aria-live="polite">
+      <div><dt>总 tokens</dt><dd id="stat-total">—</dd></div>
+      <div><dt>输入 tokens</dt><dd id="stat-input">—</dd></div>
+      <div><dt>输出 tokens</dt><dd id="stat-output">—</dd></div>
+      <div><dt title="所有轮次的输出 tokens ÷ 模型轮次总耗时，包含首段等待时间，不包含工具耗时。">输出 TPS <span class="metric-unit">tok/s</span></dt><dd id="stat-tps">—</dd></div>
+      <div><dt title="最近一轮从开始到首个文字、思考或工具参数内容片段的时间。">首段响应</dt><dd id="stat-first">—</dd></div>
+      <div><dt title="缓存读取 tokens ÷（输入 + 缓存读取 + 缓存写入 tokens）。">缓存命中</dt><dd id="stat-cache">—</dd></div>
+    </dl>
+    <div id="stats-note" class="muted">生成中以 ≈ 标记估算值，结束后以模型返回的统计为准。</div>
+  </section>
+  <main class="workspace">
+    <aside class="requests" aria-label="请求历史">
+      <div class="section-heading"><h1>请求历史</h1><span id="run-count"></span></div>
+      <div id="runs"></div>
+    </aside>
+    <section class="execution" aria-label="执行流程">
+      <div class="section-heading"><h2>执行流程</h2><span id="run-status"></span></div>
+      <div id="run-title" class="run-title">选择一次请求</div>
+      <div id="run-meta" class="muted"></div>
+      <div class="timeline-tools"><span id="timeline-count" class="muted"></span><button type="button" id="timeline-jump" class="json-button" hidden>定位当前步骤</button></div>
+      <div id="graph" class="graph" role="region" aria-label="执行时间轴"></div>
+    </section>
+    <section class="inspector" aria-label="节点详情">
+      <div class="section-heading"><h2>节点详情</h2><span id="node-kind"></span></div>
+      <div id="node-title" class="node-title">点击流程中的节点</div>
+      <dl id="node-meta" class="node-meta"></dl>
+      <dl id="node-metrics" class="metrics node-metrics" aria-label="模型节点统计" hidden></dl>
+      <div class="tabs" role="tablist" aria-label="详情类型">
+        <button type="button" role="tab" aria-selected="true" aria-controls="detail-panel" id="tab-data" data-tab="data">输入与输出</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="detail-panel" id="tab-source" data-tab="source">关联源码</button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="detail-panel" id="tab-ask" data-tab="ask">针对这步提问</button>
+      </div>
+      <div id="detail-panel" role="tabpanel" aria-labelledby="tab-data">
+        <div id="data-view">
+          <h3>输入</h3><div id="node-input" class="json-viewer" aria-label="输入内容"></div>
+          <h3>输出</h3><div id="node-output" class="json-viewer" aria-label="输出内容"></div>
+          <details id="attempts-view" hidden><summary>模型请求尝试</summary><div id="node-attempts" class="json-viewer" aria-label="模型请求尝试内容"></div></details>
+        </div>
+        <div id="source-view" hidden>
+          <div id="source-location" class="muted"></div>
+          <pre id="source-code">正在读取源码…</pre>
+        </div>
+        <div id="ask-view" hidden>
+          <div class="question-shortcuts">
+            <button type="button" data-question="这一步在做什么？请结合输入和输出解释。">这步做什么</button>
+            <button type="button" data-question="为什么执行到这里？它与前后步骤是什么关系？">为什么到这里</button>
+            <button type="button" data-question="这一步是否失败？如果失败，后续如何处理？">失败了吗</button>
+          </div>
+          <form id="ask-form">
+            <label for="question">问题</label>
+            <textarea id="question" rows="4" maxlength="2000" placeholder="例如：这次 read 的结果如何影响后面的修改？" required></textarea>
+            <button class="primary" type="submit" id="send-question">发送到当前 Pi 会话</button>
+            <div id="ask-status" role="status" class="muted"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>本机记录 · 模型与工具的实际执行轨迹 · 源码按执行阶段关联</footer>
+</body>
+</html>

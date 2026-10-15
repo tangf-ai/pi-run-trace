@@ -1,0 +1,7 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.3.5/schema.json",
+	"files": { "includes": ["**", "!node_modules", "!.test-output", "!package-lock.json"] },
+	"formatter": { "enabled": true, "lineWidth": 120 },
+	"linter": { "enabled": true, "rules": { "recommended": true } },
+	"assist": { "actions": { "source": { "organizeImports": "on" } } }
+}
